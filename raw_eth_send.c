@@ -129,28 +129,29 @@ int main(int argc, char *argv[])
 	dest_ip[0] = orig_ip[0];
 	dest_ip[1] = orig_ip[1];
 	dest_ip[2] = orig_ip[2];
-	dest_ip[3] = orig_ip[3] + 1;
+	dest_ip[3] = 0;
 
 	while (dest_ip[3] < 255)
 	{
-		/* target IP adr */
-		memcpy(buffer + frame_len, dest_ip, sizeof(dest_ip));
-		frame_len += sizeof(dest_ip);
-		
+		if (dest_ip[3] != = orig_ip[3])
+		{
+			/* target IP adr */
+			memcpy(buffer + frame_len, dest_ip, sizeof(dest_ip));
+			frame_len += sizeof(dest_ip);
+
+			/* envia pacote */
+			if (sendto(fd, buffer, frame_len, 0, (struct sockaddr *)&socket_address, sizeof(struct sockaddr_ll)) < 0)
+			{
+				perror("send");
+				close(fd);
+				exit(1);
+			}
+
+			printf("Pacote enviado.\n");
+		}
+
 		dest_ip[3] = dest_ip[3] + 1;
-
-		printf("%c\n", &dest_ip[3]);
 	}
-
-	/* Envia pacote */
-	// if (sendto(fd, buffer, frame_len, 0, (struct sockaddr *)&socket_address, sizeof(struct sockaddr_ll)) < 0)
-	// {
-	// 	perror("send");
-	// 	close(fd);
-	// 	exit(1);
-	// }
-
-	printf("Pacote enviado.\n");
 
 	close(fd);
 	return 0;
