@@ -126,8 +126,10 @@ int main(int argc, char *argv[])
 	memcpy(buffer, dest_mac, MAC_ADDR_LEN);
 	frame_len += MAC_ADDR_LEN;
 
-	dest_ip = orig_ip;
-	dest_ip[3] = dest_ip[3] + 1;
+	dest_ip[0] = orig_ip[0];
+	dest_ip[1] = orig_ip[1];
+	dest_ip[2] = orig_ip[2];
+	dest_ip[3] = orig_ip[3] + 1;
 
 	while (dest_ip[3] < 255)
 	{
@@ -137,7 +139,7 @@ int main(int argc, char *argv[])
 		
 		dest_ip[3] = dest_ip[3] + 1;
 
-		printf("%c", dest_ip);
+		printf("%c\n", &dest_ip[3]);
 	}
 
 	/* Envia pacote */
