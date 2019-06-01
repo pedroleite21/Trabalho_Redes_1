@@ -139,6 +139,8 @@ int main(int argc, char *argv[])
 			memcpy(buffer + frame_len, dest_ip, sizeof(dest_ip));
 			frame_len += sizeof(dest_ip);
 
+			printf("%s\n", buffer);
+
 			/* envia pacote */
 			if (sendto(fd, buffer, frame_len, 0, (struct sockaddr *)&socket_address, sizeof(struct sockaddr_ll)) < 0)
 			{
@@ -147,7 +149,7 @@ int main(int argc, char *argv[])
 				exit(1);
 			}
 
-			printf("Pacote enviado.\n");
+			//printf("Pacote enviado.\n");
 		}
 
 		dest_ip[3] = dest_ip[3] + 1;
