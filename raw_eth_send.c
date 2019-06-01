@@ -138,9 +138,7 @@ int main(int argc, char *argv[])
 			/* target IP adr */
 			memcpy(buffer + frame_len, dest_ip, sizeof(dest_ip));
 			frame_len += sizeof(dest_ip);
-
-			printf("%s\n", buffer);
-
+			
 			/* envia pacote */
 			if (sendto(fd, buffer, frame_len, 0, (struct sockaddr *)&socket_address, sizeof(struct sockaddr_ll)) < 0)
 			{
