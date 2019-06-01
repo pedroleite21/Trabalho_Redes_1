@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 
 	short int operation = htons(0x0001);
 
-	char orig_ip[] = {0xFF, 0XFF, 0XFF, 0XFF};
+	char orig_ip[] = {192, 168, 1, 187};
 	char dest_ip[] = {0xFF, 0XFF, 0XFF, 0XFF};
 
 	if (argc != 2)
@@ -126,11 +126,19 @@ int main(int argc, char *argv[])
 	memcpy(buffer, dest_mac, MAC_ADDR_LEN);
 	frame_len += MAC_ADDR_LEN;
 
-	/* target IP adr */
-	memcpy(buffer + frame_len, dest_ip, sizeof(dest_ip));
-	frame_len += sizeof(dest_ip);
+	dest_ip = orig_ip;
+	dest_ip[3] = dest_ip[3] + 1;
 
-	printf("%d\n", frame_len);
+	while (dest_ip[3] < 255)
+	{
+		/* target IP adr */
+		memcpy(buffer + frame_len, dest_ip, sizeof(dest_ip));
+		frame_len += sizeof(dest_ip);
+		
+		dest_ip[3] = dest_ip[3] + 1;
+
+		printf("%c", dest_ip);
+	}
 
 	/* Envia pacote */
 	// if (sendto(fd, buffer, frame_len, 0, (struct sockaddr *)&socket_address, sizeof(struct sockaddr_ll)) < 0)
