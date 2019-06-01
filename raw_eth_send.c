@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
 
 	while (dest_ip[3] < 255)
 	{
-		if (dest_ip[3] != = orig_ip[3])
+		if (dest_ip[3] != orig_ip[3])
 		{
 			/* target IP adr */
 			memcpy(buffer + frame_len, dest_ip, sizeof(dest_ip));
