@@ -28,13 +28,14 @@ int main(int argc, char *argv[])
 	short int hardtype = htons(0x0001);
 	short int proptype = htons(0x0800);
 
-	char hardsize[] = {htons(0x06)};
-	char propsize[] = {htons(0x04)};
+	char hardsize = 0x06;
+	char propsize = 0x04;
 
 	short int operation = htons(0x0001);
 
-	char orig_ip[] = {192, 168, 1, 187};
-	char dest_ip[] = {0xFF, 0XFF, 0XFF, 0XFF};
+	char orig_ip[] = {10, 32, 143, 47};
+	
+	char dest_ip[] = {10, 32, 143, 48};
 
 	if (argc != 2)
 	{
@@ -93,65 +94,102 @@ int main(int argc, char *argv[])
 	/* Preenche o campo EtherType */
 	memcpy(buffer + frame_len, &ethertype, sizeof(ethertype));
 	frame_len += sizeof(ethertype);
+	printf("EtherType - %d - %d\n", frame_len, sizeof(ethertype));
 
 	/* Preenche o campo hard type */
 	memcpy(buffer + frame_len, &hardtype, sizeof(hardtype));
 	frame_len += sizeof(hardtype);
+	printf("HARDTYPE - %d - %d\n", frame_len, sizeof(hardtype));
 
 	/* prop type */
 	memcpy(buffer + frame_len, &proptype, sizeof(proptype));
 	frame_len += sizeof(proptype);
+	printf("Proptype - %d - %d\n", frame_len, sizeof(proptype));
 
 	/* hard size */
 	memcpy(buffer + frame_len, &hardsize, sizeof(hardsize));
 	frame_len += sizeof(hardsize);
+	printf("Hardsize - %d - %d\n", frame_len, sizeof(hardsize));
 
 	/* prop size */
 	memcpy(buffer + frame_len, &propsize, sizeof(propsize));
 	frame_len += sizeof(propsize);
+	printf("Propsize - %d - %d\n", frame_len, sizeof(propsize));
 
 	/* op */
 	memcpy(buffer + frame_len, &operation, sizeof(operation));
 	frame_len += sizeof(operation);
+	printf("op - %d - %d\n", frame_len, sizeof(operation));
 
 	/* sender Ethernet addr */
 	memcpy(buffer + frame_len, if_mac.ifr_hwaddr.sa_data, MAC_ADDR_LEN);
 	frame_len += MAC_ADDR_LEN;
+	printf("ethernet sender - %d - %d\n", frame_len, MAC_ADDR_LEN);
 
 	/* sender IP addr */
 	memcpy(buffer + frame_len, orig_ip, sizeof(orig_ip));
 	frame_len += sizeof(orig_ip);
+	printf("sender ip - %d - %d\n", frame_len, sizeof(orig_ip));
 
 	/* target Ethernet addr */
 	memcpy(buffer, dest_mac, MAC_ADDR_LEN);
 	frame_len += MAC_ADDR_LEN;
 
-	dest_ip[0] = orig_ip[0];
-	dest_ip[1] = orig_ip[1];
-	dest_ip[2] = orig_ip[2];
-	dest_ip[3] = 0;
+	// dest_ip[0] = orig_ip[0];
+	// dest_ip[1] = orig_ip[1];
+	// dest_ip[2] = orig_ip[2];
+	// dest_ip[3] = orig_ip[3];
 
-	while (dest_ip[3] < 255)
-	{
-		if (dest_ip[3] != orig_ip[3])
+	int i = 0;
+	for (i = 1; i < 255; i++) {
+
+		if (i == 47)
+			continue;
+
+		dest_ip[3] = i;
+
+		memcpy(buffer + frame_len, dest_ip, sizeof(dest_ip));
+		frame_len += sizeof(dest_ip);
+
+		if (sendto(fd, buffer, frame_len, 0, (struct sockaddr *)&socket_address, sizeof(struct sockaddr_ll)) < 0)
 		{
-			/* target IP adr */
-			memcpy(buffer + frame_len, dest_ip, sizeof(dest_ip));
-			frame_len += sizeof(dest_ip);
-			
-			/* envia pacote */
-			if (sendto(fd, buffer, frame_len, 0, (struct sockaddr *)&socket_address, sizeof(struct sockaddr_ll)) < 0)
-			{
-				perror("send");
-				close(fd);
-				exit(1);
-			}
-
-			//printf("Pacote enviado.\n");
+			perror("send");
+			close(fd);
+			exit(1);
 		}
 
-		dest_ip[3] = dest_ip[3] + 1;
+		frame_len -= sizeof(dest_ip);
 	}
+
+	printf("Pacote enviado.\n");
+	printf("%d\n", frame_len);
+
+
+
+
+
+	// while (dest_ip[3] < 255)
+	// {
+	// 	if (dest_ip[3] != orig_ip[3])
+	// 	{
+	// 		/* target IP adr */
+	// 		memcpy(buffer + frame_len, dest_ip, sizeof(dest_ip));
+	// 		frame_len += sizeof(dest_ip);
+			
+	// 		/* envia pacote */
+	// 		if (sendto(fd, buffer, frame_len, 0, (struct sockaddr *)&socket_address, sizeof(struct sockaddr_ll)) < 0)
+	// 		{
+	// 			perror("send");
+	// 			close(fd);
+	// 			exit(1);
+	// 		}
+
+	// 		printf("Pacote enviado.\n");
+	// 		printf("%d\n", frame_len);
+	// 	}
+
+	// 	dest_ip[3] = dest_ip[3] + 1;
+	// }
 
 	close(fd);
 	return 0;
