@@ -12,7 +12,10 @@
 #define BUFFER_SIZE 1600
 #define MAX_DATA_SIZE 1500
 #define ETHERTYPE 0x0806
+<<<<<<< HEAD
 #define REPLY 0X0002
+=======
+>>>>>>> 1ca420bb5c1aafb61a86a418c965b932561b5834
 
 int main(int argc, char *argv[])
 {
@@ -163,7 +166,10 @@ int main(int argc, char *argv[])
 		unsigned char mac_dst[6];
 		unsigned char mac_src[6];
 		unsigned char ip_src[4];
+<<<<<<< HEAD
 		unsigned char ip_dst[4];
+=======
+>>>>>>> 1ca420bb5c1aafb61a86a418c965b932561b5834
 		short int ethertype;
 		short int oprecieve;
 		
@@ -185,11 +191,15 @@ int main(int argc, char *argv[])
 		oprecieve = ntohs(oprecieve);
 		
 		memcpy(ip_src, reply+14, sizeof(ip_src));
+<<<<<<< HEAD
 
 		memcpy(ip_dst, reply+24, sizeof(ip_dst));
 		if (ethertype == ETHERTYPE && oprecieve == 2
 			&& (orig_ip[0] == ip_dst[0] && orig_ip[1] == ip_dst[1] && orig_ip[2] == ip_dst[2] && orig_ip[3] == ip_dst[3])
 		) {
+=======
+		if (ethertype == ETHERTYPE && oprecieve == 0x0002) {
+>>>>>>> 1ca420bb5c1aafb61a86a418c965b932561b5834
 			printf("IP: %d.%d.%d.%d\t", ip_src[0], ip_src[1], ip_src[2], ip_src[3]);
 			printf("MAC origem:  %02x:%02x:%02x:%02x:%02x:%02x\n", 
                         mac_src[0], mac_src[1], mac_src[2], mac_src[3], mac_src[4], mac_src[5]);
